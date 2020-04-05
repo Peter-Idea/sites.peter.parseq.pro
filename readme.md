@@ -33,9 +33,10 @@ letsencrypt
 
 Добавление сайта
 -----------------
-для добавления сайта, например https://site3.peter.parseq.pro/,
+Для добавления сайта(ов), например https://site3.peter.parseq.pro/,
 потребуется создать каталоги docker-nginx№сайта\html (например, docker-nginx3\html)
-поместить в них файлы сайта, добавить в фаил docker-compose.yml строки:
+поместить в них файлы сайта, добавить в фаил docker-compose.yml строки 
+для нашего примера:
 
     nginx3:
     image: nginx:latest
@@ -49,7 +50,11 @@ letsencrypt
     - proxy
 
     volumes:
-     - ./docker-nginx2/html:/usr/share/nginx/html
+     - ./docker-nginx3/html:/usr/share/nginx/html
+
+ Если у вас не "nginx3" как в нашем примере, тогда замените на свои обозначения.
+ Замените домен сайта, и путь к файлам сайта.
+
 Запуск
 ------
 Для запуска требуется выполнить
