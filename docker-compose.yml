@@ -1,0 +1,65 @@
+version: "3.3"
+
+networks:
+  proxy:
+    external: true
+
+services:
+
+  traefik:
+    image: "traefik:v2.2"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=dev.Peter.2019@yandex.ru"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+
+    networks:
+      - proxy
+
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  nginx1:
+    image: nginx:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx1.rule=Host(`site1.peter.parseq.pro`)"
+      - "traefik.http.routers.nginx1.entrypoints=websecure"
+      - "traefik.http.routers.nginx1.tls.certresolver=myresolver"
+
+    networks:
+      - proxy
+
+    volumes:
+       - ./docker-nginx1/html:/usr/share/nginx/html
+
+
+  nginx2:
+    image: nginx:latest
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx2.rule=Host(`site2.peter.parseq.pro`)"
+      - "traefik.http.routers.nginx2.entrypoints=websecure"
+      - "traefik.http.routers.nginx2.tls.certresolver=myresolver"
+
+    networks:
+      - proxy
+
+    volumes:
+       - ./docker-nginx2/html:/usr/share/nginx/html
