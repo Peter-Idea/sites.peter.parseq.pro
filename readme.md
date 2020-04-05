@@ -26,8 +26,8 @@ letsencrypt
 1. скопировать каталоги и файлы проекта в домашний катаог,
 2. в каталоги docker-nginx1\html, docker-nginx2\html поместить файлы сайта
 3. создать сеть proxy, которую будет слушать Traefik:
-
-<docker network create proxy>
+       
+       docker network create proxy
 
 
 
